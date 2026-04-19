@@ -1,0 +1,39 @@
+name: Super-Linter
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Lint Code Base
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          # 必须设置为 0 以获取所有历史记录，否则某些扫描器会报错
+          fetch-depth: 0
+
+      - name: Run Super-Linter
+        uses: super-linter/super-linter@v6
+        env:
+          # 设为 true 会扫描整个仓库，设为 false 只扫描变动的文件
+          VALIDATE_ALL_CODEBASE: true
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # --- 针对你的仓库优化 ---
+          # 开启你需要的扫描器
+          VALIDATE_BASH: true
+          VALIDATE_POWERSHELL: true
+          VALIDATE_MARKDOWN: true
+          # 重点：如果你的脚本有一些“黑科技”写法，可以忽略掉过于死板的样式警告
+          DISABLE_ERRORS: false
