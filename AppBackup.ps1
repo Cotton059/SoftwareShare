@@ -1,20 +1,29 @@
-﻿<#
- +----------------------------------------------------------+
- |                                                          |
- |         >>> Application Data Tool <<<                    |
- |                                                          |
- +----------------------------------------------------------+
- |  Author: Everbright (Lightspeed Sharing)                 |
- |  Project: Light-Help Open Source Tool                    |
- |  Status: Backup & Restore for Win 10/11                  |
- +----------------------------------------------------------+
-#>
+# +----------------------------------------------------------+
+# |                                                          |
+# |         >>> Application Data Tool <<<                    |
+# |                                                          |
+# +----------------------------------------------------------+
+# |  Author: Lightspeed Sharing (YT)                         |
+# |  Project: Cotton059/Light-Help                           |
+# |  Status: Backup & Restore for Win 10/11                  |
+# +----------------------------------------------------------+
 
 # ==========================================
 # Auto-Elevation to Administrator Privileges
 # ==========================================
 $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    
+    # Check if script is running from memory (Remote Raw)
+    if ([string]::IsNullOrEmpty($PSCommandPath)) {
+        Write-Host "`n [ERROR] Remote memory execution detected." -ForegroundColor Red
+        Write-Host " Auto-elevation cannot restart an in-memory script." -ForegroundColor Yellow
+        Write-Host " Please launch PowerShell as Administrator first, then execute the raw link." -ForegroundColor White
+        Start-Sleep -Seconds 5
+        exit
+    }
+
+    # Local execution auto-elevation
     $startProcessArgs = @{
         FilePath     = "powershell.exe"
         ArgumentList = "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
@@ -138,7 +147,7 @@ function Show-Header {
     Write-Host " |    ( o )    >>> APPLICATION DATA TOOL <<<                |" -ForegroundColor White
     Write-Host " |   /_____\                                                |" -ForegroundColor Cyan
     Write-Host " +----------------------------------------------------------+" -ForegroundColor Cyan
-    Write-Host " |  Developer: Everbright                                   |" -ForegroundColor Magenta
+    Write-Host " |  Developer: Lightspeed Sharing (YT)                      |" -ForegroundColor Magenta
     Write-Host " |  Project  : Light-Help (GitHub)                          |" -ForegroundColor Magenta
     Write-Host " |  Platform : Windows 10 / 11 Optimization                 |" -ForegroundColor Yellow
     Write-Host " +----------------------------------------------------------+" -ForegroundColor Cyan
